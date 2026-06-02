@@ -199,7 +199,7 @@ export default function ConverterPage() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-16 space-y-6">
+            <div className="text-center py-12 space-y-6">
               <div className="flex justify-center">
                 <Loader2 className="h-12 w-12 text-primary animate-spin" />
               </div>

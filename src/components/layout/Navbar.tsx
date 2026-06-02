@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { FileUp, Menu } from "lucide-react";
+import { FileUp } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -11,17 +10,10 @@ export function Navbar() {
           <span className="font-bold text-xl">Universal File Converter</span>
         </Link>
         
-        <div className="hidden md:flex items-center gap-6">
+        <div className="flex items-center gap-6">
           <Link href="/#features" className="text-sm font-medium hover:text-primary transition-colors">Features</Link>
           <Link href="/#how-it-works" className="text-sm font-medium hover:text-primary transition-colors">How it Works</Link>
-          <Button asChild>
-            <Link href="/converter/excel-to-json">Get Started</Link>
-          </Button>
         </div>
-
-        <button className="md:hidden p-2">
-          <Menu className="h-6 w-6" />
-        </button>
       </div>
     </nav>
   );

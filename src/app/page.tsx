@@ -27,17 +27,17 @@ export default function HomePage() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}
-      <section className="w-full py-16 px-4 bg-gradient-to-b from-primary/10 to-background text-center flex flex-col items-center justify-center">
+      <section className="w-full py-12 px-4 bg-gradient-to-b from-primary/10 to-background text-center flex flex-col items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-3xl space-y-6"
         >
-          <h1 className="text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+          <h1 className="text-2xl md:text-5xl font-extrabold tracking-tight text-foreground">
             Universal File Conversion
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-md md:text-xl text-muted-foreground">
             Fast, secure, and hassle-free file conversion for everyone. 
             No sign-up required.
           </p>
@@ -91,7 +91,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular Converters */}
-      <section id="popular" className="w-full py-16 bg-muted/50">
+      <section id="popular" className="w-full py-12 bg-muted/50">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -121,7 +121,7 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="w-full py-16 bg-background">
+      <section id="features" className="w-full py-12 bg-background">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Enterprise-Grade Features</h2>
