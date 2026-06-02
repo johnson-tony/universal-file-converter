@@ -21,7 +21,7 @@ export default function AboutPage() {
             </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground">
-            About <span className="text-[#1F2937]">File</span><span className="text-[#2D6A6A]">Forge</span>
+            About <span className="text-[#1F2937]">File</span><span className="text-[#4F46E5]">Forge</span>
           </h1>
           <p className="text-xl text-muted-foreground">
             Making file conversion fast, easy, and accessible for everyone.
@@ -34,7 +34,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="prose prose-lg max-w-none text-center space-y-8">
             <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
-              <span className="font-bold text-[#1F2937]">File</span><span className="font-bold text-[#2D6A6A]">Forge</span> was built with a simple goal: to make file conversion fast, easy, and accessible for everyone. 
+              <span className="font-bold text-[#1F2937]">File</span><span className="font-bold text-[#4F46E5]">Forge</span> was built with a simple goal: to make file conversion fast, easy, and accessible for everyone. 
               Whether you need to convert documents, images, spreadsheets, or data files, our platform provides a clean and reliable 
               experience without requiring software installation or technical knowledge.
             </p>

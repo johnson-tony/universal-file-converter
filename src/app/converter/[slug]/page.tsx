@@ -116,24 +116,24 @@ export default function ConverterPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 max-w-4xl">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">{title}</h1>
-        <p className="text-muted-foreground">Upload your file below to start the conversion process.</p>
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl md:text-3xl font-bold mb-1">{title}</h1>
+        <p className="text-muted-foreground text-sm">Upload your file to start the conversion process.</p>
       </div>
 
-      <Card className="w-full shadow-lg border-primary/10">
-        <CardHeader>
-          <CardTitle>File Upload</CardTitle>
-          <CardDescription>Drag and drop your file or click to browse</CardDescription>
+      <Card className="w-full shadow-md border-primary/10 overflow-hidden">
+        <CardHeader className="pb-3 border-b ">
+          <CardTitle className="text-lg">File Upload</CardTitle>
+          <CardDescription className="text-xs">Select or drop your file below</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {status === "idle" || status === "failed" ? (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div
                 onDragOver={onDragOver}
                 onDrop={onDrop}
-                className="border-2 border-dashed border-input rounded-xl p-12 text-center hover:bg-muted/50 hover:border-primary/50 transition-colors cursor-pointer"
+                className="border-2 border-dashed border-input rounded-xl p-6 text-center hover:bg-muted/50 hover:border-primary/50 transition-colors cursor-pointer group"
                 onClick={() => document.getElementById("file-upload")?.click()}
               >
                 <input
@@ -143,74 +143,74 @@ export default function ConverterPage() {
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="p-4 bg-primary/10 rounded-full text-primary">
-                    <UploadCloud className="h-8 w-8" />
+                <div className="flex flex-col items-center justify-center space-y-3">
+                  <div className="p-3 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition-transform">
+                    <UploadCloud className="h-6 w-6" />
                   </div>
                   {file ? (
                     <div>
-                      <p className="font-medium text-lg">{file.name}</p>
-                      <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      <p className="font-semibold text-sm truncate max-w-[200px] mx-auto">{file.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                   ) : (
                     <div>
-                      <p className="font-medium text-lg">Click or drag file to this area to upload</p>
-                      <p className="text-sm text-muted-foreground">Support for single file upload.</p>
+                      <p className="font-semibold text-sm">Click or drag file to upload</p>
+                      <p className="text-[10px] text-muted-foreground">Max size: {converter ? (converter.maxSize / 1024 / 1024).toFixed(0) : "10"}MB</p>
                     </div>
                   )}
                 </div>
               </div>
 
               {errorMsg && (
-                <div className="bg-destructive/10 text-destructive p-4 rounded-lg flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5" />
-                  <p>{errorMsg}</p>
+                <div className="bg-destructive/10 text-destructive px-3 py-2 rounded-lg flex items-center gap-2 text-xs">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <p className="line-clamp-2">{errorMsg}</p>
                 </div>
               )}
 
               {file && (
-                <div className="flex justify-center">
-                  <Button size="lg" className="w-full sm:w-auto px-8" onClick={handleConvert}>
+                <div className="flex justify-center pt-2">
+                  <Button className="w-full md:w-auto px-10 h-10 font-bold" onClick={handleConvert}>
                     Start Conversion
                   </Button>
                 </div>
               )}
             </div>
           ) : status === "completed" ? (
-            <div className="text-center py-4 space-y-6">
+            <div className="text-center py-2 space-y-4">
               <div className="flex justify-center">
-                <div className="h-20 w-20 bg-success/10 text-success rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-10 w-10 text-emerald-500" />
+                <div className="h-14 w-14 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center border border-emerald-100 shadow-sm">
+                  <CheckCircle className="h-8 w-8" />
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-bold mb-2">Conversion Successful!</h3>
-                <p className="text-muted-foreground">Your file is ready to download.</p>
+                <h3 className="text-xl font-bold mb-1">Done!</h3>
+                <p className="text-muted-foreground text-xs">Your file is ready to download.</p>
               </div>
-              <div className="flex justify-center gap-4">
-                <Button size="lg" asChild className="gap-2">
+              <div className="flex flex-col sm:flex-row justify-center gap-2 pt-2">
+                <Button asChild className="gap-2 h-10 px-6 font-bold flex-1 sm:flex-none">
                   <a href={downloadUrl!} download>
-                    <Download className="h-5 w-5" /> Download File
+                    <Download className="h-4 w-4" /> Download
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" onClick={() => { setFile(null); setStatus("idle"); setDownloadUrl(null); }}>
-                  Convert Another
+                <Button variant="outline" className="h-10 px-6 font-bold flex-1 sm:flex-none" onClick={() => { setFile(null); setStatus("idle"); setDownloadUrl(null); }}>
+                  New Conversion
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="text-center py-4 space-y-6">
+            <div className="text-center py-6 space-y-4">
               <div className="flex justify-center">
-                <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                <Loader2 className="h-10 w-10 text-primary animate-spin" />
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">
-                  {status === "uploading" ? "Uploading your file..." : "Processing conversion..."}
+              <div className="max-w-xs mx-auto">
+                <h3 className="text-base font-bold mb-2">
+                  {status === "uploading" ? "Uploading..." : "Processing..."}
                 </h3>
-                <div className="w-full max-w-md mx-auto bg-muted rounded-full h-2.5 mb-2 overflow-hidden">
-                  <div className="bg-primary h-2.5 rounded-full transition-all duration-500 ease-in-out" style={{ width: `${progress}%` }}></div>
+                <div className="w-full bg-muted rounded-full h-2 mb-1 overflow-hidden">
+                  <div className="bg-primary h-2 rounded-full transition-all duration-500 ease-in-out" style={{ width: `${progress}%` }}></div>
                 </div>
-                <p className="text-sm text-muted-foreground">{progress}% Complete</p>
+                <p className="text-[10px] font-bold text-muted-foreground">{progress}%</p>
               </div>
             </div>
           )}

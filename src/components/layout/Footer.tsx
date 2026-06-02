@@ -4,7 +4,7 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer className="w-full bg-background border-t">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Column 1: Brand */}
           <div className="space-y-6">
@@ -49,7 +49,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-muted-foreground">
+        <div className="mt-4 pt-4 border-t text-center gap-4 text-[13px] text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} FileForge. All rights reserved.</p>
         </div>
       </div>
