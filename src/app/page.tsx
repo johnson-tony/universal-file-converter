@@ -5,13 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ConverterSearch } from "@/components/converter/ConverterSearch";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { Carousel } from "@/components/ui/Carousel";
 import { CONVERTERS } from "@/config/converters";
-
-// Get popular converters
-const POPULAR_CONVERTERS = CONVERTERS.filter(c => 
-  ["excel-to-json", "json-to-excel", "json-to-pdf", "pdf-to-docx", "docx-to-pdf", "svg-to-png", "heic-to-jpg"].includes(c.id)
-).slice(0, 3);
 
 export default function HomePage() {
   return (
@@ -36,26 +30,6 @@ export default function HomePage() {
 
       {/* Search Section */}
       <ConverterSearch />
-
-      {/* Popular Converters */}
-      <Carousel id="popular" title="Popular Converters" description="Our most frequently used conversion tools.">
-        {POPULAR_CONVERTERS.map((converter) => (
-          <Link key={converter.id} href={`/converter/${converter.id}`} className="flex-none w-[280px] md:w-full snap-center">
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="p-6 bg-card border rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer h-full"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <converter.icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold text-lg">{converter.title}</h3>
-              </div>
-              <p className="text-muted-foreground text-sm line-clamp-2">{converter.description}</p>
-            </motion.div>
-          </Link>
-        ))}
-      </Carousel>
     </div>
   );
 }

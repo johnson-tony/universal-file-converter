@@ -3,10 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, FileText, ImageIcon, FileCode, Hammer, Menu, X } from "lucide-react";
+import { ChevronDown, FileText, ImageIcon, FileCode, Hammer, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CONVERTERS } from "@/config/converters";
-import { Button } from "@/components/ui/button";
 
 const CATEGORIES = [
   { id: "documents", name: "Documents", icon: FileText },
@@ -87,21 +86,25 @@ export function Navbar() {
           <Link href="/contact" className="text-sm font-semibold hover:text-primary transition-colors">Contact</Link>
         </div>
 
-        {/* Auth Actions */}
-        <div className="hidden lg:flex items-center gap-4">
-          <Link href="/admin/login" className="text-sm font-semibold hover:text-primary px-4 transition-colors">Login</Link>
-          <Button className="rounded-full h-11 px-8 font-bold shadow-lg shadow-primary/20" asChild>
-            <Link href="/category/documents">Get Started</Link>
-          </Button>
+        {/* User Icon */}
+        <div className="hidden lg:flex items-center">
+          <Link href="" className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary">
+            <User className="h-6 w-6" />
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
-          className="lg:hidden p-2 hover:bg-muted rounded-xl transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <Link href="/admin/login" className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary">
+            <User className="h-6 w-6" />
+          </Link>
+          <button 
+            className="p-2 hover:bg-muted rounded-xl transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar */}
@@ -138,15 +141,6 @@ export function Navbar() {
                 <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold px-4 hover:text-primary">Pricing</Link>
                 <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold px-4 hover:text-primary">About</Link>
                 <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-bold px-4 hover:text-primary">Contact</Link>
-              </div>
-
-              <div className="flex flex-col gap-3 pt-4">
-                <Button variant="outline" className="rounded-2xl h-14 font-bold" asChild>
-                  <Link href="/admin/login" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
-                </Button>
-                <Button className="rounded-2xl h-14 font-bold" asChild>
-                  <Link href="/category/documents" onClick={() => setIsMobileMenuOpen(false)}>Get Started</Link>
-                </Button>
               </div>
             </div>
           </motion.div>
