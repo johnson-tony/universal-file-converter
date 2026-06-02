@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, FileText, ImageIcon, FileCode, Hammer, Menu, X, User } from "lucide-react";
+import { ChevronDown, FileText, ImageIcon, FileCode, Hammer, Menu, X, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CONVERTERS } from "@/config/converters";
+import { usePathname, useRouter } from "next/navigation";
 
 const CATEGORIES = [
   { id: "documents", name: "Documents", icon: FileText },
@@ -17,6 +18,48 @@ const CATEGORIES = [
 export function Navbar() {
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const isAdminDashboard = pathname?.startsWith("/admin/dashboard");
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/admin/logout", { method: "POST" });
+      if (res.ok) {
+        router.push("/admin/login");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  if (isAdminDashboard) {
+    return (
+      <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+          {/* Brand Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <Image src="/logo.png" alt="Logo" width={32} height={32} className="rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-sm" />
+            <span className="font-extrabold text-2xl tracking-tighter">
+              <span className="text-[#1F2937]">File</span>
+              <span className="text-[#2D6A6A]">Forge</span>
+              <span className="ml-2 px-2 py-0.5 bg-primary/10 text-primary text-[10px] uppercase tracking-widest rounded-md border border-primary/20">Admin</span>
+            </span>
+          </Link>
+
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all border border-red-100"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
@@ -80,13 +123,14 @@ export function Navbar() {
               )}
             </AnimatePresence>
           </div>
+          <Link href="/pricing" className="text-sm font-semibold hover:text-primary transition-colors">Pricing</Link>
           <Link href="/about" className="text-sm font-semibold hover:text-primary transition-colors">About</Link>
           <Link href="/contact" className="text-sm font-semibold hover:text-primary transition-colors">Contact</Link>
         </div>
 
         {/* User Icon */}
         <div className="hidden lg:flex items-center">
-          <Link href="" className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary">
+          <Link href="/admin/login" className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary">
             <User className="h-6 w-6" />
           </Link>
         </div>

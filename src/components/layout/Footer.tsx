@@ -1,7 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  const isAdminDashboard = pathname?.startsWith("/admin/dashboard");
+
+  if (isAdminDashboard) return null;
+
   return (
     <footer className="w-full bg-background border-t">
       <div className="container mx-auto px-4 py-4">
