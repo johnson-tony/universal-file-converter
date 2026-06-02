@@ -52,8 +52,6 @@ export async function jpgToPdf(buffer: Buffer): Promise<Buffer> {
   return Buffer.from(pdfBytes);
 }
 
-import pdf from "pdf-parse";
-
 /**
  * Merges multiple PDF buffers into one.
  */
@@ -73,8 +71,6 @@ export async function mergePdfs(buffers: Buffer[]): Promise<Buffer> {
  */
 export async function compressPdf(buffer: Buffer): Promise<Buffer> {
   const pdfDoc = await PDFDocument.load(buffer);
-  // pdf-lib doesn't have native "compression" (like image downsampling),
-  // but saving with useObjectStreams helps.
   const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
   return Buffer.from(pdfBytes);
 }
@@ -83,6 +79,8 @@ export async function compressPdf(buffer: Buffer): Promise<Buffer> {
  * Extracts text from a PDF buffer.
  */
 export async function pdfToTxt(buffer: Buffer): Promise<string> {
+  // Turbopack / Next.js ESM Compatibility Fix: Use dynamic require for pdf-parse
+  const pdf = require("pdf-parse");
   const data = await pdf(buffer);
   return data.text;
 }

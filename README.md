@@ -1,13 +1,13 @@
 # Universal File Converter SaaS
 
-A production-ready SaaS application built with Next.js 15, TypeScript, Tailwind CSS, MongoDB, and Cloudflare R2 for seamless file conversion.
+A production-ready SaaS application built with Next.js 15, TypeScript, Tailwind CSS, MongoDB, and Cloudinary for seamless file conversion.
 
 ## 🚀 Architecture Overview
 
 - **Frontend**: Next.js 15 (App Router), React, Tailwind CSS, Framer Motion, Lucide React
 - **Backend**: Next.js API Routes (Serverless)
 - **Database**: MongoDB Atlas (Mongoose) - Stores conversion metadata and status, no actual files.
-- **Storage**: Cloudflare R2 - S3 compatible object storage for secure, temporary file holding.
+- **Storage**: Cloudinary - Cloud-based asset management for secure, temporary file holding.
 - **Styling**: Tailwind CSS configured with a modern SaaS color palette.
 
 ## 📁 Project Structure
@@ -20,7 +20,7 @@ A production-ready SaaS application built with Next.js 15, TypeScript, Tailwind 
     /ui                 # Reusable UI components (Button, Card, etc.)
   /lib
     /mongodb            # MongoDB connection utility
-    /r2                 # Cloudflare R2 integration (AWS SDK)
+    /cloudinary         # Cloudinary integration
   /models               # Mongoose schemas (Conversion)
   /utils                # Utility functions (cn for Tailwind)
 ```
@@ -31,7 +31,7 @@ A production-ready SaaS application built with Next.js 15, TypeScript, Tailwind 
 
 - Node.js 18+
 - MongoDB Atlas Account (Free tier works)
-- Cloudflare Account (For R2 Storage)
+- Cloudinary Account (Free tier works)
 
 ### 2. Environment Variables
 
@@ -39,10 +39,9 @@ Create a `.env.local` file in the root of the project using the provided `.env.e
 
 ```env
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/universal-file-converter
-R2_ACCOUNT_ID=your_account_id
-R2_ACCESS_KEY_ID=your_access_key
-R2_SECRET_ACCESS_KEY=your_secret_key
-R2_BUCKET_NAME=your_bucket_name
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 ### 3. Installation
@@ -73,7 +72,7 @@ Vercel will automatically detect Next.js and configure the build settings.
 
 The MongoDB schema uses a TTL (Time-To-Live) index on the `expiresAt` field. By default, records are set to expire 24 hours after creation, and MongoDB will automatically delete them. 
 
-To clean up the actual files in R2, you should configure an **Object Lifecycle Rule** in your Cloudflare R2 bucket settings to automatically delete objects older than 1 day.
+To clean up the actual files in Cloudinary, you should configure a **Media Library Upload Preset** or use a scheduled background task to delete assets older than 1 day using the Cloudinary Admin API.
 
 ## 🔮 Future Expansion
 

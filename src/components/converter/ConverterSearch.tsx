@@ -22,7 +22,7 @@ export function ConverterSearch() {
   });
 
   return (
-    <section className="w-full py-12 px-4 max-w-6xl mx-auto">
+    <section className="w-full py-2 px-4 max-w-6xl mx-auto">
       <div className="flex flex-col items-center mb-12 space-y-8">
         {/* Search Input */}
         <div className="relative max-w-xl w-full">

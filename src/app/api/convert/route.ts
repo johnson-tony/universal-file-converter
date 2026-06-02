@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getDownloadUrl, s3Client } from "@/lib/r2";
+import cloudinary, { uploadBuffer } from "@/lib/cloudinary";
 import connectToDatabase from "@/lib/mongodb";
 import { Conversion } from "@/models/Conversion";
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { excelToJson, jsonToExcel, excelToCsv } from "@/converters/excelConverter";
 import { jsonToPdf } from "@/converters/pdfConverter";
 import { svgToPng, pngToSvg, heicToJpg, jpgToWebp, webpToJpg, jpgToPng, webpToPng, pngToJpg, pngToWebp } from "@/converters/imageConverter";
@@ -11,15 +10,13 @@ import { csvToJson, jsonToCsv, xmlToJson, jsonToXml, yamlToJson } from "@/conver
 import { convertToIco, compressImage } from "@/converters/toolConverter";
 import { getConverterById } from "@/config/converters";
 
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME;
-
-async function streamToBuffer(stream: any): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const chunks: any[] = [];
-    stream.on("data", (chunk: any) => chunks.push(chunk));
-    stream.on("error", reject);
-    stream.on("end", () => resolve(Buffer.concat(chunks)));
-  });
+async function getBufferFromUrl(url: string): Promise<Buffer> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch file from URL: ${response.statusText}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
 
 export async function POST(req: Request) {
@@ -27,7 +24,7 @@ export async function POST(req: Request) {
   let currentConversionId: string | null = null;
 
   try {
-    const { conversionId, fileKey, conversionType } = await req.json();
+    const { conversionId, fileKey, fileUrl, conversionType } = await req.json();
     currentConversionId = conversionId;
 
     const converterConfig = getConverterById(conversionType);
@@ -38,18 +35,19 @@ export async function POST(req: Request) {
     await connectToDatabase();
     await Conversion.findByIdAndUpdate(conversionId, { status: "processing" });
 
-    // 1. Download original file from R2
-    const getCommand = new GetObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: fileKey,
-    });
-    const { Body } = await s3Client.send(getCommand);
-    const inputBuffer = await streamToBuffer(Body);
+    // 1. Get original file buffer
+    let inputBuffer: Buffer;
+    if (fileUrl) {
+      inputBuffer = await getBufferFromUrl(fileUrl);
+    } else {
+      // Fallback: fileKey is the publicId (e.g. "uploads/uuid")
+      const inputUrl = cloudinary.url(fileKey, { resource_type: "auto", secure: true });
+      inputBuffer = await getBufferFromUrl(inputUrl);
+    }
 
     // 2. Perform conversion
     let outputBuffer: Buffer;
     const targetExt = converterConfig.targetExt;
-    const contentType = converterConfig.contentType;
 
     switch (conversionType) {
       case "excel-to-json":
@@ -147,19 +145,19 @@ export async function POST(req: Request) {
         outputBuffer = await compressPdf(inputBuffer);
         break;
       case "html-to-pdf":
+        // Simple HTML to PDF via text extraction for now
         const htmlText = inputBuffer.toString().replace(/<[^>]*>?/gm, '');
         outputBuffer = await jsonToPdf([{ content: htmlText }]);
         break;
       case "pdf-to-csv":
         const pdfData = await pdfToTxt(inputBuffer);
-        outputBuffer = Buffer.from(pdfData); // Simplified
+        outputBuffer = Buffer.from(pdfData); 
         break;
       case "pdf-to-excel":
         const pdfText = await pdfToTxt(inputBuffer);
         outputBuffer = await jsonToExcel([{ content: pdfText }]);
         break;
       case "pdf-to-jpg":
-        // Fallback or complex impl
         outputBuffer = inputBuffer; 
         break;
       case "excel-to-csv":
@@ -170,25 +168,19 @@ export async function POST(req: Request) {
         throw new Error(`Conversion logic not implemented for: ${conversionType}`);
     }
 
-    // 3. Upload converted file to R2
-    const outputKey = fileKey.replace("uploads/", "converted/").replace(/\.[^/.]+$/, "") + "." + targetExt;
-    const putCommand = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: outputKey,
-      Body: outputBuffer,
-      ContentType: contentType,
-    });
-    await s3Client.send(putCommand);
-
-    // 4. Generate download URL
-    const downloadUrl = await getDownloadUrl(outputKey);
+    // 3. Upload converted file to Cloudinary
+    const outputFileName = `${fileKey.split("/").pop()}_converted.${targetExt}`;
+    const uploadResult: any = await uploadBuffer(outputBuffer, "converted", outputFileName);
+    const downloadUrl = uploadResult.secure_url;
+    const outputKey = uploadResult.public_id;
+    
     const processingTime = Date.now() - startTime;
 
-    // 5. Update MongoDB
+    // 4. Update MongoDB
     await Conversion.findByIdAndUpdate(conversionId, {
       status: "completed",
-      outputFileUrl: outputKey,
-      outputFileName: outputKey.split("/").pop(),
+      outputFileUrl: downloadUrl, // Using the full secure_url for direct download
+      outputFileName: outputFileName,
       outputFileSize: outputBuffer.length,
       processingTime,
     });

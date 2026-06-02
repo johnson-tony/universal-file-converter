@@ -57,7 +57,7 @@ export default function ConverterPage() {
     setProgress(20);
 
     try {
-      // 1. Get presigned URL for upload
+      // 1. Get signed params for upload
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,17 +66,31 @@ export default function ConverterPage() {
 
       if (!res.ok) throw new Error("Failed to initialize upload.");
       
-      const { uploadUrl, fileKey, conversionId } = await res.json();
+      const { uploadUrl, signature, timestamp, apiKey, publicId, folder, conversionId } = await res.json();
       setProgress(40);
 
-      // 2. Upload file to R2
+      // 2. Upload file to Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("signature", signature);
+      formData.append("timestamp", timestamp.toString());
+      formData.append("api_key", apiKey);
+      formData.append("public_id", publicId);
+      formData.append("folder", folder);
+
       const uploadRes = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
+        method: "POST",
+        body: formData,
       });
 
-      if (!uploadRes.ok) throw new Error("Failed to upload file to storage.");
+      if (!uploadRes.ok) {
+        const errorData = await uploadRes.json();
+        throw new Error(errorData.error?.message || "Failed to upload file to storage.");
+      }
+
+      const uploadData = await uploadRes.json();
+      const fileKey = uploadData.public_id; // Cloudinary public_id
+      const fileUrl = uploadData.secure_url;
 
       setStatus("processing");
       setProgress(60);
@@ -85,7 +99,7 @@ export default function ConverterPage() {
       const convertRes = await fetch("/api/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversionId, fileKey, conversionType: slug }),
+        body: JSON.stringify({ conversionId, fileKey, fileUrl, conversionType: slug }),
       });
 
       if (!convertRes.ok) throw new Error("Failed to process conversion.");

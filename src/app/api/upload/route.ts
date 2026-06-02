@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUploadUrl } from "@/lib/r2";
+import cloudinary from "@/lib/cloudinary";
 import connectToDatabase from "@/lib/mongodb";
 import { Conversion } from "@/models/Conversion";
 import crypto from "crypto";
@@ -12,12 +12,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const timestamp = Math.round(new Date().getTime() / 1000);
     const fileId = crypto.randomUUID();
-    const fileExtension = fileName.split(".").pop();
-    const storageKey = `uploads/${fileId}.${fileExtension}`;
+    const publicId = `${fileId}`;
+    const folder = "uploads";
 
-    // Get signed URL from R2
-    const uploadUrl = await getUploadUrl(storageKey, contentType);
+    const signature = cloudinary.utils.api_sign_request(
+      {
+        timestamp: timestamp,
+        folder: folder,
+        public_id: publicId,
+      },
+      process.env.CLOUDINARY_API_SECRET!
+    );
 
     // Save record to MongoDB
     await connectToDatabase();
@@ -26,13 +33,18 @@ export async function POST(req: Request) {
       conversionType,
       originalFileName: fileName,
       originalFileSize: 0, // Will be updated later
-      inputFileUrl: storageKey,
+      inputFileUrl: `${folder}/${publicId}`, // Store publicId as the URL reference
       status: "pending",
     });
 
     return NextResponse.json({
-      uploadUrl,
-      fileKey: storageKey,
+      uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/auto/upload`,
+      signature,
+      timestamp,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      publicId,
+      folder,
       conversionId: conversion._id,
     });
   } catch (error: any) {
