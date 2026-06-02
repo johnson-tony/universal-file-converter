@@ -63,7 +63,6 @@ export function Navbar() {
                         </div>
                         <div className="flex flex-col gap-1.5">
                           {CONVERTERS.filter(c => c.category.toLowerCase() === cat.id.toLowerCase())
-                            .slice(0, 5)
                             .map(conv => (
                               <Link 
                                 key={conv.id} 
@@ -74,12 +73,6 @@ export function Navbar() {
                                 {conv.title.replace(`${cat.name} to `, "").replace(`${cat.name} `, "")}
                               </Link>
                             ))}
-                          <Link 
-                            href={`/category/${cat.id}`}
-                            className="text-[12px] font-bold text-primary mt-2 flex items-center hover:underline"
-                          >
-                            View all {cat.name} →
-                          </Link>
                         </div>
                       </div>
                     ))}
