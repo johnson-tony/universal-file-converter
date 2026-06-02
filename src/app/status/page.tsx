@@ -14,7 +14,7 @@ export default function StatusPage() {
   return (
     <div className="flex flex-col items-center min-h-screen">
       {/* Hero Section */}
-      <section className="w-full py-16 px-4 bg-background text-center">
+      <section className="w-full py-4 px-4 bg-background text-center">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -35,7 +35,7 @@ export default function StatusPage() {
       </section>
 
       {/* Status Grid */}
-      <section className="w-full py-12 bg-background">
+      <section className="w-full py-4 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="grid gap-6">
             {SYSTEMS.map((system, i) => (

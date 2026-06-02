@@ -8,7 +8,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}
-      <section className="w-full py-20 px-4 bg-gradient-to-b from-primary/10 to-background text-center flex flex-col items-center justify-center">
+      <section className="w-fullpy-4 px-4 bg-gradient-to-b from-primary/10 to-background text-center flex flex-col items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export default function AboutPage() {
       </section>
 
       {/* Content Section */}
-      <section className="w-full py-20 bg-background">
+      <section className="w-fullpy-4 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="prose prose-lg max-w-none text-center space-y-8">
             <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
@@ -39,7 +39,7 @@ export default function AboutPage() {
               experience without requiring software installation or technical knowledge.
             </p>
             
-            <div className="grid md:grid-cols-2 gap-8 py-12">
+            <div className="grid md:grid-cols-2 gap-8 py-4">
               <div className="flex flex-col items-center p-8 bg-card border rounded-3xl shadow-sm space-y-4">
                 <div className="p-3 bg-primary/10 rounded-xl text-primary">
                   <Zap className="h-8 w-8" />

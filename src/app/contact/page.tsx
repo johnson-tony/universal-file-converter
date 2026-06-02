@@ -9,7 +9,7 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}
-      <section className="w-full py-16 px-4 bg-gradient-to-b from-primary/10 to-background text-center">
+      <section className="w-full py-4 px-4 bg-gradient-to-b from-primary/10 to-background text-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

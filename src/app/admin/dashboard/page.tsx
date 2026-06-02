@@ -61,7 +61,7 @@ export default async function AdminDashboardPage() {
   const { total, successRate, avgTimeSec, popular, recent } = await getStats();
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
+    <div className="container mx-auto px-4 py-4 max-w-6xl">
       <div className="mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
@@ -140,7 +140,7 @@ export default async function AdminDashboardPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground py-8 text-center">No recent activity detected.</p>
+                <p className="text-sm text-muted-foreground py-4 text-center">No recent activity detected.</p>
               )}
             </div>
           </CardContent>
@@ -169,7 +169,7 @@ export default async function AdminDashboardPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground py-8 text-center">No data available.</p>
+                <p className="text-sm text-muted-foreground py-4 text-center">No data available.</p>
               )}
             </div>
           </CardContent>

@@ -116,7 +116,7 @@ export default function ConverterPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground">Upload your file below to start the conversion process.</p>
@@ -177,7 +177,7 @@ export default function ConverterPage() {
               )}
             </div>
           ) : status === "completed" ? (
-            <div className="text-center py-12 space-y-6">
+            <div className="text-center py-4 space-y-6">
               <div className="flex justify-center">
                 <div className="h-20 w-20 bg-success/10 text-success rounded-full flex items-center justify-center">
                   <CheckCircle className="h-10 w-10 text-emerald-500" />
@@ -199,7 +199,7 @@ export default function ConverterPage() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-12 space-y-6">
+            <div className="text-center py-4 space-y-6">
               <div className="flex justify-center">
                 <Loader2 className="h-12 w-12 text-primary animate-spin" />
               </div>
