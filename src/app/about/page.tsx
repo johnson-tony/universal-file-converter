@@ -20,10 +20,10 @@ export default function AboutPage() {
               <Image src="/logo.png" alt="Logo" width={48} height={48} />
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
             About <span className="text-[#1F2937]">File</span><span className="text-[#4F46E5]">Forge</span>
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-lg sm:text-xl text-muted-foreground">
             Making file conversion fast, easy, and accessible for everyone.
           </p>
         </motion.div>

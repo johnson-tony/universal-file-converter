@@ -73,7 +73,7 @@ export function Navbar() {
 
   if (isAdminDashboard) {
     return (
-      <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-60 transition-all duration-300">
+      <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-[100] transition-all duration-300">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2 group">
@@ -98,7 +98,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-60 transition-all duration-300">
+    <nav className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-[100] transition-all duration-300">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 group">
@@ -130,7 +130,7 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 w-[700px] bg-card border rounded-[2rem] shadow-2xl overflow-hidden p-8 backdrop-blur-xl bg-card/95"
+                  className="absolute top-full left-1/2 -translate-x-1/2 w-[700px] bg-card border rounded-[2rem] shadow-2xl overflow-hidden p-8 backdrop-blur-xl bg-card/95 z-[110]"
                 >
                   <div className="grid grid-cols-4 gap-8">
                     {CATEGORIES.map((cat) => (
@@ -194,7 +194,7 @@ export function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-slate-950/25 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[120] bg-slate-950/25 backdrop-blur-sm lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.aside
@@ -202,7 +202,7 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-              className="fixed inset-y-0 right-0 z-50 w-full max-w-md overflow-y-auto bg-white shadow-2xl ring-1 ring-slate-900/5 dark:bg-slate-950 lg:hidden"
+              className="fixed inset-y-0 right-0 z-[130] w-full max-w-[280px] sm:max-w-md overflow-y-auto bg-white shadow-2xl ring-1 ring-slate-900/5 dark:bg-slate-950 lg:hidden"
             >
               <div className="flex items-center justify-between gap-4 border-b border-slate-200/80 px-5 py-5 dark:border-slate-700/80">
                 <div className="space-y-1">
