@@ -28,12 +28,12 @@ export async function POST(req: Request) {
         },
       });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Must be the authenticated user
-      to: "tonyjanson121@gmail.com",
-      replyTo: email,
-      subject: `[Contact Form] ${subject}`,
-      text: `
+      const mailOptions = {
+        from: process.env.EMAIL_USER, // Must be the authenticated user
+        to: "tonyjanson121@gmail.com",
+        replyTo: email,
+        subject: `[Contact Form] ${subject}`,
+        text: `
         Name: ${firstName} ${lastName}
         Email: ${email}
         Subject: ${subject}
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         Message:
         ${message}
       `,
-      html: `
+        html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #4F46E5;">New Contact Form Submission</h2>
           <p><strong>Name:</strong> ${firstName} ${lastName}</p>
@@ -52,11 +52,12 @@ export async function POST(req: Request) {
           <p style="white-space: pre-wrap;">${message}</p>
         </div>
       `,
-    };
+      };
 
-    await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
+    }
 
-    return NextResponse.json({ message: "Email sent successfully" });
+    return NextResponse.json({ message: "Message received successfully" });
   } catch (error: any) {
     console.error("Error sending email:", error);
     return NextResponse.json(
