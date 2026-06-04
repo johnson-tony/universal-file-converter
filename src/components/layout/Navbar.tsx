@@ -204,17 +204,17 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-              className="fixed inset-y-0 right-0 w-full max-w-full sm:max-w-md overflow-y-auto bg-white shadow-2xl dark:bg-slate-950 lg:hidden flex flex-col"
+              className="fixed inset-y-0 right-0 w-full max-w-full sm:max-w-md overflow-y-auto bg-primary shadow-2xl lg:hidden flex flex-col"
             >
-              <div className="flex items-center justify-between gap-4 border-b border-slate-200/80 px-6 py-5 dark:border-slate-800">
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-5">
                 <div className="space-y-1">
-                  <h2 className="text-md font-extrabold text-primary tracking-tight">FileForge Tools</h2>
+                  <h2 className="text-md font-extrabold text-white tracking-tight">FileForge Tools</h2>
                 </div>
                 <button
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center text-slate-900"
+                  className="inline-flex h-10 w-10 items-center justify-center text-white/80 hover:text-white transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -223,23 +223,23 @@ export function Navbar() {
               <div className="flex-1 overflow-y-auto space-y-6 px-6 py-6">
                 <div className="space-y-4">
                   {groupedSections.map((section) => (
-                    <div key={section.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
+                    <div key={section.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/10 backdrop-blur-sm shadow-sm">
                       <button
                         type="button"
                         onClick={() => toggleSection(section.id)}
                         aria-expanded={openSections[section.id]}
-                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/5"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white">
                             <section.icon className="h-5 w-5" />
                           </span>
                           <div>
-                            <p className="text-sm font-bold text-slate-900 dark:text-white">{section.name}</p>
-                            <p className="mt-0.5 text-[10px] font-medium text-slate-500 uppercase tracking-wider">{section.items.length} converters</p>
+                            <p className="text-sm font-bold text-white">{section.name}</p>
+                            <p className="mt-0.5 text-[10px] font-medium text-white/60 uppercase tracking-wider">{section.items.length} converters</p>
                           </div>
                         </div>
-                        <ChevronDown className={cn("h-4 w-4 text-slate-400 transition-transform duration-300", openSections[section.id] ? "rotate-180" : "")} />
+                        <ChevronDown className={cn("h-4 w-4 text-white/40 transition-transform duration-300", openSections[section.id] ? "rotate-180" : "")} />
                       </button>
 
                       <AnimatePresence initial={false}>
@@ -249,7 +249,7 @@ export function Navbar() {
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30"
+                            className="border-t border-white/5 bg-white/5"
                           >
                             <div className="grid grid-cols-1 gap-1 p-3">
                               {section.items.map((item) => {
@@ -263,11 +263,11 @@ export function Navbar() {
                                     className={cn(
                                       "flex items-center gap-3 rounded-xl px-4 py-3 text-[13px] transition-all",
                                       active
-                                        ? "bg-primary text-white font-bold shadow-md shadow-primary/20"
-                                        : "text-slate-600 hover:bg-white hover:text-primary hover:shadow-sm dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+                                        ? "bg-white text-primary font-bold shadow-md"
+                                        : "text-white/70 hover:bg-white/10 hover:text-white"
                                     )}
                                   >
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", active ? "bg-white" : "bg-slate-300")} />
+                                    <div className={cn("w-1.5 h-1.5 rounded-full", active ? "bg-primary" : "bg-white/30")} />
                                     {item.title}
                                   </Link>
                                 );
@@ -281,10 +281,10 @@ export function Navbar() {
                 </div>
 
                 {/* Mobile Bottom Links */}
-                <div className="grid grid-cols-1 gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">Pricing</Link>
-                  <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">About</Link>
-                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors">Contact</Link>
+                <div className="grid grid-cols-1 gap-2 pt-4 border-t border-white/10">
+                  <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Pricing</Link>
+                  <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">About</Link>
+                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Contact</Link>
                 </div>
               </div>
             </motion.aside>

@@ -55,7 +55,7 @@ export async function POST(req: Request) {
         to: contact.email,
         subject: `Re: ${contact.subject}`,
         text: `
-Hello ${contact.firstName},
+Hello ${contact.name},
 
 ${replyMessage}
 
@@ -68,7 +68,7 @@ FileForge Support Team
         `,
         html: `
           <div style="font-family: sans-serif; padding: 20px; color: #333;">
-            <p>Hello ${contact.firstName},</p>
+            <p>Hello ${contact.name},</p>
             <p style="white-space: pre-wrap;">${replyMessage}</p>
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
             <p style="color: #666; font-size: 12px;">In response to your message:</p>

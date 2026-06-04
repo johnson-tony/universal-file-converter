@@ -56,7 +56,16 @@ async function getData() {
       .sort({ createdAt: -1 })
       .limit(50);
 
-    return { total, successRate, avgTimeSec, popular, recent, contacts: JSON.parse(JSON.stringify(contacts)) };
+    const data = { 
+      total, 
+      successRate, 
+      avgTimeSec, 
+      popular, 
+      recent, 
+      contacts 
+    };
+
+    return JSON.parse(JSON.stringify(data));
   } catch (error) {
     console.error("Dashboard Stats Error:", error);
     return { total: 0, successRate: 0, avgTimeSec: "0", popular: [], recent: [], contacts: [] };

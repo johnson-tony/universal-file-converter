@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { 
   BarChart, Activity, Clock, FileCheck, Mail, MessageCircle, 
   Send, CheckCircle, Clock4, User, Search, ChevronRight,
-  Loader2, AlertCircle
+  Loader2, AlertCircle, Trash2, X, File, Download, Info, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,47 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
   const [selectedContact, setSelectedContact] = useState<any>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [deleteStatus, setDeleteStatus] = useState<"idle" | "success" | "error">("idle");
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string, type: 'contact' | 'conversion', title: string } | null>(null);
+  const [showToast, setShowToast] = useState<{ show: boolean, message: string, type: 'success' | 'error' }>({ show: false, message: "", type: 'success' });
 
   const { total, successRate, avgTimeSec, popular, recent, contacts } = initialData;
+
+  const triggerToast = (message: string, type: 'success' | 'error') => {
+    setShowToast({ show: true, message, type });
+    setTimeout(() => setShowToast({ show: false, message: "", type: 'success' }), 3000);
+  };
+
+  const handleDelete = async (id: string, type: 'contact' | 'conversion') => {
+    setIsDeleting(true);
+    setDeleteStatus("idle");
+    try {
+      const res = await fetch(`/api/admin/${type}?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setDeleteStatus("success");
+        triggerToast(`${type === 'contact' ? 'Message' : 'Record'} deleted successfully`, 'success');
+        setTimeout(() => {
+          setDeleteConfirm(null);
+          if (type === 'contact') setSelectedContact(null);
+          window.location.reload();
+        }, 1000);
+      } else {
+        setDeleteStatus("error");
+        triggerToast(`Failed to delete ${type}`, 'error');
+      }
+    } catch (err) {
+      console.error(`Error deleting ${type}:`, err);
+      setDeleteStatus("error");
+      triggerToast(`Error deleting ${type}`, 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleReply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,25 +80,96 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
 
       if (res.ok) {
         setStatus("success");
+        triggerToast("Reply sent successfully", 'success');
         setReplyMessage("");
         setTimeout(() => {
           setSelectedContact(null);
           setStatus("idle");
-          // In a real app, you'd refresh the data here
           window.location.reload();
         }, 2000);
       } else {
         setStatus("error");
+        triggerToast("Failed to send reply", 'error');
       }
     } catch (err) {
       setStatus("error");
+      triggerToast("Error sending reply", 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl relative">
+      {/* Admin Toast */}
+      <AnimatePresence>
+        {showToast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className="fixed top-6 left-1/2 z-[150] w-full max-w-xs px-4"
+          >
+            <div className={cn(
+              "p-4 rounded-2xl shadow-2xl flex items-center gap-3 border backdrop-blur-md",
+              showToast.type === 'success' ? "bg-emerald-500 text-white border-emerald-400" : "bg-red-500 text-white border-red-400"
+            )}>
+              {showToast.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+              <p className="text-sm font-bold">{showToast.message}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Universal Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirm && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirm(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-sm bg-card border shadow-2xl rounded-[2rem] p-8 text-center"
+            >
+              <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trash2 className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-black mb-2">Delete this {deleteConfirm.type === 'contact' ? 'message' : 'record'}?</h3>
+              <p className="text-primary font-bold text-sm mb-4 line-clamp-1">"{deleteConfirm.title}"</p>
+              <p className="text-muted-foreground text-xs mb-8 leading-relaxed">
+                This action is permanent and cannot be undone.
+              </p>
+              
+              <div className="flex flex-col gap-3">
+                <Button 
+                  variant="destructive" 
+                  className="h-12 rounded-xl font-bold"
+                  onClick={() => handleDelete(deleteConfirm.id, deleteConfirm.type)}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Yes, Delete Now"}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="h-12 rounded-xl font-bold"
+                  onClick={() => setDeleteConfirm(null)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Header & Tabs */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div>
@@ -132,21 +241,36 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                 <CardContent className="p-0">
                   <div className="divide-y">
                     {recent.map((req: any, i: number) => (
-                      <div key={i} className="flex items-center justify-between p-4 hover:bg-muted/10 transition-colors">
+                      <div 
+                        key={i} 
+                        className="w-full flex items-center justify-between p-4 hover:bg-primary/5 transition-colors group"
+                      >
                         <div className="min-w-0">
                           <p className="font-bold text-sm truncate">{req.originalFileName}</p>
                           <p className="text-[10px] text-muted-foreground font-mono uppercase mt-0.5">{req.conversionType}</p>
                         </div>
-                        <div className="text-right shrink-0">
-                          <span className={cn(
-                            "inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider",
-                            req.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'
-                          )}>
-                            {req.status}
-                          </span>
-                          <p className="text-[10px] text-muted-foreground mt-1 font-medium">
-                            {new Date(req.createdAt).toLocaleTimeString()}
-                          </p>
+                        <div className="text-right shrink-0 flex items-center gap-4">
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider",
+                              req.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 
+                              req.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                            )}>
+                              {req.status}
+                            </span>
+                            <p suppressHydrationWarning className="text-[10px] text-muted-foreground font-medium">
+                              {new Date(req.createdAt).toLocaleTimeString()}
+                            </p>
+                          </div>
+                          
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-9 w-9 p-0 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-all"
+                            onClick={() => setDeleteConfirm({ id: req._id, type: 'conversion', title: req.originalFileName })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -199,13 +323,13 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
               <div className="flex-1 overflow-y-auto divide-y">
                 {contacts.length > 0 ? (
                   contacts.map((contact: any) => (
-                    <button
+                    <div
                       key={contact._id}
-                      onClick={() => setSelectedContact(contact)}
                       className={cn(
-                        "w-full text-left p-5 hover:bg-muted/10 transition-all group flex items-start gap-4",
+                        "w-full text-left p-5 hover:bg-muted/10 transition-all group flex items-start gap-4 cursor-pointer",
                         selectedContact?._id === contact._id ? "bg-primary/5 border-l-4 border-primary" : "border-l-4 border-transparent"
                       )}
+                      onClick={() => setSelectedContact(contact)}
                     >
                       <div className={cn(
                         "p-2 rounded-xl transition-colors",
@@ -215,13 +339,24 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex justify-between items-start mb-1">
-                          <p className="font-bold text-sm text-foreground truncate">{contact.firstName} {contact.lastName}</p>
-                          <span className="text-[10px] font-medium text-muted-foreground">{new Date(contact.createdAt).toLocaleDateString()}</span>
+                          <p className="font-bold text-sm text-foreground truncate">{contact.name}</p>
+                          <div className="flex items-center gap-3">
+                            <span suppressHydrationWarning className="text-[10px] font-medium text-muted-foreground">{new Date(contact.createdAt).toLocaleDateString()}</span>
+                            <button 
+                              className="text-muted-foreground hover:text-red-600 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirm({ id: contact._id, type: 'contact', title: `${contact.name}'s Message` });
+                              }}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </div>
                         <p className="text-xs font-bold text-primary mb-1 truncate">{contact.subject}</p>
                         <p className="text-xs text-muted-foreground line-clamp-1">{contact.message}</p>
                       </div>
-                    </button>
+                    </div>
                   ))
                 ) : (
                   <div className="p-12 text-center text-muted-foreground">No messages yet.</div>
@@ -244,16 +379,26 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                           <User className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                          <CardTitle className="text-xl">{selectedContact.firstName} {selectedContact.lastName}</CardTitle>
+                          <CardTitle className="text-xl">{selectedContact.name}</CardTitle>
                           <CardDescription className="font-medium text-primary">{selectedContact.email}</CardDescription>
                         </div>
                       </div>
-                      <button 
-                        onClick={() => setSelectedContact(null)}
-                        className="lg:hidden p-2 hover:bg-muted rounded-full"
-                      >
-                        <ChevronRight className="h-6 w-6 rotate-180" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-9 w-9 p-0 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-colors"
+                          onClick={() => setDeleteConfirm({ id: selectedContact._id, type: 'contact', title: `${selectedContact.name}'s Message` })}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                        <button 
+                          onClick={() => setSelectedContact(null)}
+                          className="lg:hidden p-2 hover:bg-muted rounded-full"
+                        >
+                          <ChevronRight className="h-6 w-6 rotate-180" />
+                        </button>
+                      </div>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
                       <div className="space-y-2">
@@ -271,7 +416,7 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                         <div className="mt-8 pt-8 border-t space-y-4">
                           <div className="flex items-center gap-2 text-emerald-600">
                              <CheckCircle className="h-4 w-4" />
-                             <span className="text-xs font-bold uppercase tracking-wider">Your Reply (Sent {new Date(selectedContact.repliedAt).toLocaleDateString()})</span>
+                             <span suppressHydrationWarning className="text-xs font-bold uppercase tracking-wider">Your Reply (Sent {new Date(selectedContact.repliedAt).toLocaleDateString()})</span>
                           </div>
                           <div className="p-6 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-100 dark:border-emerald-900 text-sm leading-relaxed whitespace-pre-wrap italic">
                             {selectedContact.adminReply}
@@ -285,7 +430,7 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                     <Card className="shadow-xl border-2 border-primary/20">
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <Send className="h-4 w-4 text-primary" /> Reply to {selectedContact.firstName}
+                          <Send className="h-4 w-4 text-primary" /> Reply to {selectedContact.name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -297,7 +442,7 @@ export function AdminDashboardClient({ initialData }: DashboardClientProps) {
                               value={replyMessage}
                               onChange={(e) => setReplyMessage(e.target.value)}
                               className="w-full min-h-[150px] p-4 rounded-xl border-2 border-slate-100 bg-slate-50 dark:bg-slate-900/50 outline-none focus:border-primary transition-all text-sm"
-                              placeholder={`Write your reply to ${selectedContact.firstName}...`}
+                              placeholder={`Write your reply to ${selectedContact.name}...`}
                             />
                           </div>
 

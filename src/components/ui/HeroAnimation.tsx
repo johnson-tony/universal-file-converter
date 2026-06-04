@@ -1,9 +1,16 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, FileJson, Image as ImageIcon, FileCode, ArrowRight } from "lucide-react";
+import { FileText, FileJson, ImageIcon, FileCode, ArrowRight } from "lucide-react";
 
 export const HeroAnimation = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const icons = [
     { icon: FileText, color: "text-blue-500", delay: 0 },
     { icon: ImageIcon, color: "text-purple-500", delay: 2 },
@@ -89,33 +96,35 @@ export const HeroAnimation = () => {
         </motion.div>
       ))}
 
-      {/* Background Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ 
-              x: Math.random() * 400 - 200, 
-              y: Math.random() * 400 - 200,
-              opacity: 0 
-            }}
-            animate={{ 
-              y: [null, Math.random() * -100 - 50],
-              opacity: [0, 0.3, 0] 
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-            className="absolute w-1 h-1 bg-primary rounded-full"
-            style={{ 
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%` 
-            }}
-          />
-        ))}
-      </div>
+      {/* Background Particles - Only rendered on client to avoid hydration mismatch */}
+      {isMounted && (
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ 
+                x: Math.random() * 400 - 200, 
+                y: Math.random() * 400 - 200,
+                opacity: 0 
+              }}
+              animate={{ 
+                y: [null, Math.random() * -100 - 50],
+                opacity: [0, 0.3, 0] 
+              }}
+              transition={{
+                duration: Math.random() * 3 + 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+              className="absolute w-1 h-1 bg-primary rounded-full"
+              style={{ 
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%` 
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
